@@ -226,6 +226,7 @@ public class Scheduler extends Thread {
      * method to run threads in the first queue and either eliminate them or pass
      * them into he second queue
      */
+    @SuppressWarnings("deprecation")
     private void runQueueOne() {
         Thread current = null;
         TCB currentTCB;
@@ -263,6 +264,7 @@ public class Scheduler extends Thread {
      * method to run threads in the second queue and either eliminate them or pass
      * them into he third queue
      */
+    @SuppressWarnings("deprecation")
     private void runQueueTwo() {
         Thread current = null;
         TCB currentTCB;
@@ -316,6 +318,7 @@ public class Scheduler extends Thread {
      * implementation places the thread at the end of the queue after 4 execution
      * intervals
      */
+    @SuppressWarnings("deprecation")
     private void runQueueThree() {
         Thread current = null;
         TCB currentTCB;
