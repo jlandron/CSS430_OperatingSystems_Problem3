@@ -11,10 +11,10 @@ public class TestThread3 extends Thread {
             doCompute();
             break;
         case "disk":
-            doDiskWrite();
-            SysLib.cout("Disk Write Finished");
             doDiskRead();
-            SysLib.cout("Disk Read Finished");
+            SysLib.cout("Read Finished");
+            doDiskWrite();
+            SysLib.cout("Write Finished");
             break;
         default:
             break;
@@ -26,7 +26,9 @@ public class TestThread3 extends Thread {
     private void doCompute() {
         double ans = 0;
         for (int i = 0; i < Integer.MAX_VALUE; i++) {
-            ans = Math.pow(Math.sqrt(i) * Math.sqrt(i), 2.0);
+            for (int j = 0; j < Integer.MAX_VALUE; j++) {
+                ans = Math.pow(Math.sqrt(i) * Math.sqrt(j), 2.0);
+            }
             // String s = "iteration " + i + ": ans = " + ans + "\n";
             // SysLib.cout(s);
         }
