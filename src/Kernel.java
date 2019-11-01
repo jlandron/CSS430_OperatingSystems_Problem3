@@ -202,10 +202,10 @@ public class Kernel {
 			return ERROR;
 		case INTERRUPT_DISK: // Disk interrupts
 			// wake up the thread waiting for a service completion
-			// ioQueue.dequeueAndWakeup( COND_DISK_FIN );
+			ioQueue.dequeueAndWakeup( COND_DISK_FIN );
 
 			// wake up the thread waiting for a request acceptance
-			// ioQueue.dequeueAndWakeup( COND_DISK_REQ );
+			ioQueue.dequeueAndWakeup( COND_DISK_REQ );
 
 			return OK;
 		case INTERRUPT_IO: // other I/O interrupts (not implemented)

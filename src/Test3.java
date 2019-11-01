@@ -17,11 +17,11 @@ class Test3 extends Thread {
         // intensive so you will have pairs*2 threads
         for (int i = 0; i < pairs; i++) {
             SysLib.exec(args1);
-            //SysLib.exec(args2);
+            SysLib.exec(args2);
         }
         // write code to wait for each test to finish (i.e., you need to join pairs*2
         // times)
-        for (int i = 0; i < pairs; i++) {
+        for (int i = 0; i < pairs * 2; i++) {
             SysLib.join();
         }
 
