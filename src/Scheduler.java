@@ -1,11 +1,10 @@
 import java.util.*;
 
 public class Scheduler extends Thread {
-    private Vector<TCB> queueOne;
-    private Vector<TCB> queueTwo;
-    private Vector<TCB> queueThree;
+    private Vector queueOne;
+    private Vector queueTwo;
+    private Vector queueThree;
     private int timeSlice;
-
     private static final int DEFAULT_TIME_SLICE = 1000;
 
     // New data added to p161
@@ -110,9 +109,9 @@ public class Scheduler extends Thread {
      */
     public Scheduler() {
         timeSlice = DEFAULT_TIME_SLICE;
-        queueOne = new Vector<>();
-        queueTwo = new Vector<>();
-        queueThree = new Vector<>();
+        queueOne = new Vector();
+        queueTwo = new Vector();
+        queueThree = new Vector();
         initTid(DEFAULT_MAX_THREADS);
     }
 
@@ -122,9 +121,9 @@ public class Scheduler extends Thread {
      */
     public Scheduler(int quantum) {
         timeSlice = quantum;
-        queueOne = new Vector<>();
-        queueTwo = new Vector<>();
-        queueThree = new Vector<>();
+        queueOne = new Vector();
+        queueTwo = new Vector();
+        queueThree = new Vector();
         initTid(DEFAULT_MAX_THREADS);
     }
 
@@ -139,17 +138,17 @@ public class Scheduler extends Thread {
 
     public Scheduler(int quantum, int maxThreads) {
         timeSlice = quantum;
-        queueOne = new Vector<>();
-        queueTwo = new Vector<>();
-        queueThree = new Vector<>();
+        queueOne = new Vector();
+        queueTwo = new Vector();
+        queueThree = new Vector();
         initTid(maxThreads);
     }
 
-    /**
-     * provides standard sleep time if needed
-     */
     private void schedulerSleep() {
-        schedulerSleep(timeSlice);
+        try {
+            Thread.sleep(timeSlice);
+        } catch (InterruptedException e) {
+        }
     }
 
     /**
@@ -179,7 +178,6 @@ public class Scheduler extends Thread {
             return null;
         TCB tcb = new TCB(t, tid, pid); // create a new TCB
         // thread safe operation
-
         queueOne.add(tcb);
 
         return tcb;
@@ -219,12 +217,15 @@ public class Scheduler extends Thread {
                 runQueueOne();
                 runQueueTwo();
                 runQueueThree();
-            } catch (NullPointerException e1) {
-            } catch (NoSuchElementException e2) {
+            } catch (NullPointerException e3) {
             }
         }
     }
 
+    /**
+     * method to run threads in the first queue and either eliminate them or pass
+     * them into he second queue
+     */
     private void runQueueOne() {
         Thread current = null;
         TCB currentTCB;
@@ -239,7 +240,6 @@ public class Scheduler extends Thread {
                 current.start();
             } else {
                 continue;
-
             }
 
             schedulerSleep(timeSlice / 2);
@@ -259,6 +259,10 @@ public class Scheduler extends Thread {
         }
     }
 
+    /**
+     * method to run threads in the second queue and either eliminate them or pass
+     * them into he third queue
+     */
     private void runQueueTwo() {
         Thread current = null;
         TCB currentTCB;
@@ -280,7 +284,6 @@ public class Scheduler extends Thread {
             }
 
             schedulerSleep(timeSlice / 2);
-
             if (queueOne.size() > 0) {
                 current.suspend();
                 // System.out.println("* * * Level 2 Context Switch * * * ");
@@ -306,15 +309,18 @@ public class Scheduler extends Thread {
                 queueThree.add(currentTCB);
             }
         }
-
     }
 
+    /**
+     * Method that run all threads in the third queue. This round robin
+     * implementation places the thread at the end of the queue after 4 execution
+     * intervals
+     */
     private void runQueueThree() {
         Thread current = null;
         TCB currentTCB;
 
         while (queueThree.size() > 0) {
-
             // get the next TCB and its thread
             synchronized (queueThree) {
                 currentTCB = (TCB) queueThree.firstElement();
@@ -346,27 +352,27 @@ public class Scheduler extends Thread {
                 }
             }
             schedulerSleep(timeSlice / 2);
+            // System.out.println("* * * Level 3 Context Switch * * * ");
             if (currentTCB.getTerminated()) {
                 remove(currentTCB, 3);
                 continue;
             }
-            // System.out.println("* * * Level 3 Context Switch * * * ");
             synchronized (queueThree) {
                 if (current != null && current.isAlive()) {
                     current.suspend();
+                    // current.setPriority(2); //replaced for P2
                 }
-                // this rotation keeps the heap of the queue from getting stuck in a single
-                // process
                 queueThree.remove(currentTCB); // rotate this TCB to the end
-                if (queueThree.size() <= 1) {
-                    queueThree.add(currentTCB);
-                } else {
-                    queueThree.add(1, currentTCB);
-                }
+                queueThree.add(currentTCB);
             }
         }
+
     }
 
+    /**
+     * @param tcb
+     * @param queueNum
+     */
     private void remove(TCB tcb, int queueNum) {
         switch (queueNum) {
         case 1:
