@@ -145,11 +145,11 @@ public class Scheduler extends Thread {
         initTid(maxThreads);
     }
 
+    /**
+     * provides standard sleep time if needed
+     */
     private void schedulerSleep() {
-        try {
-            Thread.sleep(timeSlice);
-        } catch (InterruptedException e) {
-        }
+        schedulerSleep(timeSlice);
     }
 
     /**

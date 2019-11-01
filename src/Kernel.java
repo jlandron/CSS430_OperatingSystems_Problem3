@@ -75,7 +75,7 @@ public class Kernel {
 				disk.start();
 
 				// instantiate a cache memory
-				cache = new Cache(disk.blockSize, 10);
+				cache = new Cache(Disk.blockSize, 10);
 
 				// instantiate synchronized queues
 				ioQueue = new SyncQueue();
@@ -137,7 +137,7 @@ public class Kernel {
 					}
 				case STDOUT:
 				case STDERR:
-					System.out.println("threaOS: caused read errors");
+					System.out.println("threadOS: caused read errors");
 					return ERROR;
 				}
 				// return FileSystem.read( param, byte args[] );
@@ -145,7 +145,7 @@ public class Kernel {
 			case WRITE:
 				switch (param) {
 				case STDIN:
-					System.out.println("threaOS: cannot write to System.in");
+					System.out.println("threadOS: cannot write to System.in");
 					return ERROR;
 				case STDOUT:
 					System.out.print((String) args);
@@ -202,7 +202,7 @@ public class Kernel {
 			// get the user thread class from its name
 			Class thrClass = Class.forName(thrName);
 			if (args.length == 1) // no arguments
-				thrObj = thrClass.newInstance(); // instantiate this class obj
+				thrObj = thrClass.getDeclaredConstructor().newInstance(); // instantiate this class obj
 			else { // some arguments
 					// copy all arguments into thrArgs[] and make a new constructor
 					// argument object from thrArgs[]
