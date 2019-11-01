@@ -88,7 +88,7 @@ public class Kernel {
 			case WAIT:
 				myTcb = scheduler.getMyTcb();
 				if (myTcb == null) {
-					return -1;
+					return ERROR;
 				}
 				// get the current thread id
 				tid = myTcb.getTid();
@@ -98,7 +98,7 @@ public class Kernel {
 			case EXIT:
 				myTcb = scheduler.getMyTcb();
 				if (myTcb == null) {
-					return -1;
+					return ERROR;
 				}
 				// get the current thread's parent id
 				tid = myTcb.getTid();
@@ -113,28 +113,22 @@ public class Kernel {
 				scheduler.sleepThread(param); // param = milliseconds
 				return OK;
 			case RAWREAD: // read a block of data from disk
-				// ccomment out spin loops and replace with moniter
 				while (disk.read(param, (byte[]) args) == false)
 					; // busy wait
 				while (disk.testAndResetReady() == false)
 					; // busy wait
-				// ioQueue.enqueueAndSleep(COND_DISK_REQ);
 				return OK;
 			case RAWWRITE: // write a block of data to disk
-				// ccomment out spin loops and replace with moniter
 				while (disk.write(param, (byte[]) args) == false)
 					; // busy wait
 				while (disk.testAndResetReady() == false)
 					; // busy wait
-
 				return OK;
 			case SYNC: // synchronize disk data to a real file
-				// ccomment out spin loops and replace with moniter
 				while (disk.sync() == false)
 					; // busy wait
 				while (disk.testAndResetReady() == false)
 					; // busy wait
-
 				return OK;
 			case READ:
 				switch (param) {
