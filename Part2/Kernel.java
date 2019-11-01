@@ -1,9 +1,6 @@
 import java.util.*;
 import java.lang.reflect.*;
 import java.io.*;
-import java.util.*;
-import java.lang.reflect.*;
-import java.io.*;
 
 public class Kernel {
 	// Interrupt requests

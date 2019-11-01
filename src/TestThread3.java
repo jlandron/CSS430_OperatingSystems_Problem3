@@ -11,7 +11,10 @@ public class TestThread3 extends Thread {
             doCompute();
             break;
         case "disk":
-            doDisk();
+            doDiskWrite();
+            SysLib.cout("Disk Write Finished");
+            doDiskRead();
+            SysLib.cout("Disk Read Finished");
             break;
         default:
             break;
@@ -29,10 +32,16 @@ public class TestThread3 extends Thread {
         }
     }
 
-    private void doDisk() {
+    private void doDiskRead() {
         byte[] buffer = new byte[512];
-        for (int i = 0; i < 10; i++) {
+        for (int i = 0; i < 1000; i++) {
             SysLib.rawread(i, buffer);
+        }
+    }
+
+    private void doDiskWrite() {
+        byte[] buffer = new byte[512];
+        for (int i = 0; i < 1000; i++) {
             SysLib.rawwrite(i, buffer);
         }
     }
