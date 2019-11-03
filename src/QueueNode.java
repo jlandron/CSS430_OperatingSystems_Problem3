@@ -17,11 +17,17 @@ class QueueNode {
         if (this.tidVector.size() == 0) {
             try {
                 this.wait();
-            } catch (InterruptedException e) {
+            } catch (Exception e) {
                 // do nothing
             }
         }
-        return this.tidVector.remove(0);
+        int retVal = -1;
+        try {
+            retVal = this.tidVector.remove(0);
+        } catch (Exception e) {
+            // do nothing
+        }
+        return retVal;
     }
 
     /**

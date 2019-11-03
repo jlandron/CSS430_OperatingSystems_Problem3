@@ -5,7 +5,7 @@ class QueueNode {
 
     
     /** 
-     * @return 
+     * default constructor establishes 
      */
     public QueueNode() {
         this.tidVector = new Vector<Integer>();
@@ -13,7 +13,7 @@ class QueueNode {
 
     
     /** 
-     * @return int
+     * @return int : method to put a thread to sleep in this queueNode
      */
     public synchronized int sleep() {
         if (this.tidVector.size() == 0) {
@@ -28,10 +28,10 @@ class QueueNode {
 
     
     /** 
-     * @param tid
+     * @param tid : tid to add to this vector and potentially notify
      */
     public synchronized void wakeup(int tid) {
         this.tidVector.add(tid);
         this.notify();
-    }
+    }    
 }

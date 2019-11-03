@@ -117,7 +117,7 @@ public class Kernel {
 					ioQueue.enqueueAndSleep(COND_DISK_REQ);
 				}
 				while (disk.testAndResetReady() == false) {
-					ioQueue.enqueueAndSleep(COND_DISK_REQ);
+					ioQueue.enqueueAndSleep(COND_DISK_FIN);
 				}
 				return OK;
 			case RAWWRITE: // write a block of data to disk
