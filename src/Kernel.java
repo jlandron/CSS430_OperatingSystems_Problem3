@@ -113,22 +113,30 @@ public class Kernel {
 				scheduler.sleepThread(param); // param = milliseconds
 				return OK;
 			case RAWREAD: // read a block of data from disk
-				while (disk.read(param, (byte[]) args) == false)
-					; // busy wait
-				while (disk.testAndResetReady() == false)
-					; // busy wait
+				while (disk.read(param, (byte[]) args) == false) {
+					ioQueue.enqueueAndSleep(COND_DISK_REQ);
+				}
+				while (disk.testAndResetReady() == false) {
+					ioQueue.enqueueAndSleep(COND_DISK_FIN);
+				}
 				return OK;
 			case RAWWRITE: // write a block of data to disk
-				while (disk.write(param, (byte[]) args) == false)
-					; // busy wait
-				while (disk.testAndResetReady() == false)
-					; // busy wait
+				while (disk.write(param, (byte[]) args) == false) {
+					ioQueue.enqueueAndSleep(COND_DISK_REQ);
+				}
+				while (disk.testAndResetReady() == false) {
+					ioQueue.enqueueAndSleep(COND_DISK_FIN);
+				}
+
 				return OK;
 			case SYNC: // synchronize disk data to a real file
-				while (disk.sync() == false)
-					; // busy wait
-				while (disk.testAndResetReady() == false)
-					; // busy wait
+				while (disk.sync() == false) {
+					ioQueue.enqueueAndSleep(COND_DISK_REQ);
+				}
+				while (disk.testAndResetReady() == false) {
+					ioQueue.enqueueAndSleep(COND_DISK_FIN);
+				}
+
 				return OK;
 			case READ:
 				switch (param) {
@@ -141,7 +149,7 @@ public class Kernel {
 						// prepare a read buffer
 						StringBuffer buf = (StringBuffer) args;
 
-						// append the keyboard intput to this read buffer
+						// append the keyboard input to this read buffer
 						buf.append(s);
 
 						// return the number of chars read from keyboard
@@ -196,10 +204,10 @@ public class Kernel {
 			return ERROR;
 		case INTERRUPT_DISK: // Disk interrupts
 			// wake up the thread waiting for a service completion
-			// ioQueue.dequeueAndWakeup( COND_DISK_FIN );
+			ioQueue.dequeueAndWakeup(COND_DISK_FIN);
 
 			// wake up the thread waiting for a request acceptance
-			// ioQueue.dequeueAndWakeup( COND_DISK_REQ );
+			ioQueue.dequeueAndWakeup(COND_DISK_REQ);
 
 			return OK;
 		case INTERRUPT_IO: // other I/O interrupts (not implemented)
